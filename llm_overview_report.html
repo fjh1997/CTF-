@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大语言模型（LLM）全景概览 —— 面向教师的 AI 时代入门指南</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: #1e293b;
+    background: #fff;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 40px 50px 60px;
+  }
+
+  /* Headings */
+  h1 {
+    font-size: 30px; font-weight: 700; color: #1d4ed8;
+    margin: 20px 0 8px; padding-bottom: 14px;
+    border-bottom: 3px solid #2563eb;
+    text-align: center;
+  }
+  h2 {
+    font-size: 21px; font-weight: 700; color: #1e293b;
+    margin: 40px 0 16px; padding: 10px 0 10px 16px;
+    border-left: 5px solid #2563eb;
+    background: linear-gradient(90deg, #dbeafe 0%, transparent 100%);
+    border-radius: 0 6px 6px 0;
+    page-break-after: avoid;
+  }
+  h3 { font-size: 17px; font-weight: 600; color: #334155; margin: 28px 0 12px; page-break-after: avoid; }
+  h4 { font-size: 15px; font-weight: 600; color: #475569; margin: 20px 0 8px; }
+
+  p { margin: 8px 0; }
+  strong { color: #0f172a; }
+  a { color: #2563eb; text-decoration: none; }
+  em { color: #64748b; }
+
+  hr {
+    margin: 35px 0;
+    border: none;
+    border-top: 2px solid #e2e8f0;
+  }
+
+  /* Lists */
+  ul, ol { margin: 8px 0; padding-left: 24px; }
+  li { margin: 4px 0; }
+
+  /* Tables */
+  table {
+    width: 100%; border-collapse: collapse;
+    margin: 16px 0; font-size: 13.5px;
+    page-break-inside: avoid;
+  }
+  thead th {
+    background: #f1f5f9; font-weight: 600;
+    text-align: left; padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+  }
+  tbody td {
+    padding: 8px 14px; border: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody tr:hover { background: #eef2ff; }
+
+  /* Inline Code */
+  code {
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 12.5px; background: #f1f5f9;
+    padding: 2px 6px; border-radius: 4px;
+    border: 1px solid #e2e8f0; color: #be185d;
+  }
+
+  /* Code Blocks */
+  pre {
+    margin: 14px 0; padding: 18px 22px;
+    background: #1e293b; color: #e2e8f0;
+    border-radius: 10px; overflow-x: auto;
+    font-size: 12.5px; line-height: 1.65;
+    page-break-inside: avoid;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  pre code {
+    background: none; border: none;
+    padding: 0; color: #e2e8f0;
+  }
+
+  /* Mermaid diagrams */
+  pre.mermaid {
+    background: #fff;
+    color: #1e293b;
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  /* Blockquotes */
+  blockquote {
+    margin: 16px 0; padding: 14px 22px;
+    border-left: 4px solid #3b82f6;
+    background: #eff6ff;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+  }
+  blockquote p { margin: 4px 0; }
+
+  /* Alerts */
+  .alert {
+    margin: 16px 0; padding: 14px 20px;
+    border-radius: 0 10px 10px 0;
+    font-size: 14px;
+    page-break-inside: avoid;
+  }
+  .alert-icon { font-size: 16px; margin-right: 6px; }
+  .alert strong {
+    display: inline; margin-right: 8px;
+  }
+  .alert p { margin: 6px 0; }
+  .alert ol, .alert ul { margin: 4px 0; }
+
+  /* Carousel / Slider */
+  .carousel {
+    position: relative;
+    margin: 20px 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+    border: 1px solid #c7d2fe;
+    border-radius: 14px;
+    overflow: hidden;
+    page-break-inside: avoid;
+    box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+  }
+  .slides-container {
+    position: relative;
+    min-height: 180px;
+  }
+  .slide {
+    display: none;
+    padding: 24px 50px;
+    animation: fadeIn 0.4s ease;
+  }
+  .slide.active { display: block; }
+  .slide pre {
+    margin: 10px 0;
+    font-size: 12px;
+  }
+  .slide p { margin: 6px 0; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .carousel-btn {
+    position: absolute; top: 50%;
+    transform: translateY(-50%);
+    background: rgba(99,102,241,0.85);
+    color: #fff; border: none;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    font-size: 16px; cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .carousel-btn:hover { background: #4f46e5; transform: translateY(-50%) scale(1.1); }
+  .carousel-btn.prev { left: 8px; }
+  .carousel-btn.next { right: 8px; }
+
+  .dots {
+    text-align: center;
+    padding: 10px 0 14px;
+  }
+  .dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    margin: 0 4px;
+    background: #cbd5e1;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .dot.active { background: #6366f1; transform: scale(1.2); }
+
+  /* Print */
+  @media print {
+    body { padding: 10px 20px; font-size: 12px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 16px; margin-top: 20px; }
+    pre { font-size: 10.5px; padding: 10px 14px; }
+    table { font-size: 11px; }
+    .carousel-btn { display: none; }
+    .slide { display: block !important; border-bottom: 1px dashed #cbd5e1; padding: 12px 20px; }
+    .dots { display: none; }
+    @page { size: A4; margin: 15mm; }
+  }
+
+  /* ASCII art boxes */
+  pre:not(.mermaid):not(.highlight) {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+</style>
+</head>
+<body>
+
+<h1 id="llm">🤖 大语言模型（LLM）全景概览</h1>
+<h2 id="ai">—— 面向教师的 AI 时代入门指南</h2>
+<blockquote>
+<p><strong>汇报日期</strong>：2026年3月<br />
+<strong>适用场景</strong>：全校教师培训 / AI 技术入门</p>
+</blockquote>
+<hr />
+<h2 id="_1">📑 目录</h2>
+<ol>
+<li><a href="#一什么是大语言模型">什么是大语言模型？</a></li>
+<li><a href="#二主流大模型种类与排名">主流大模型种类与排名</a></li>
+<li><a href="#三价格对比">价格对比</a></li>
+<li><a href="#四token-是什么">Token 是什么？</a></li>
+<li><a href="#五如何接入大模型-api">如何接入大模型 API</a></li>
+<li><a href="#六ai-编程助手agentic-coding">AI 编程助手（Agentic Coding）</a></li>
+<li><a href="#七智能体ai-agent的搭建">智能体（AI Agent）的搭建</a></li>
+<li><a href="#八mcp-协议与工具集成以-ida-pro-逆向为例">MCP 协议与工具集成（以 IDA Pro 逆向为例）</a></li>
+<li><a href="#九-实训获取免费-claude-token-并搭建智能体">🔬 实训：获取免费 Claude Token 并搭建智能体</a></li>
+<li><a href="#十教育领域应用建议">教育领域应用建议</a></li>
+</ol>
+<hr />
+<h2 id="_2">一、什么是大语言模型？</h2>
+<p>大语言模型（Large Language Model, LLM）是一种基于 <strong>深度学习</strong> 和 <strong>Transformer 架构</strong> 构建的 AI 系统，通过海量文本数据训练，能够：</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🗣️ 自然语言理解</td>
+<td>理解人类语言的含义、语法和语境</td>
+</tr>
+<tr>
+<td>✍️ 文本生成</td>
+<td>写作文、写代码、翻译、总结</td>
+</tr>
+<tr>
+<td>🧠 推理分析</td>
+<td>逻辑推理、数学计算、代码调试</td>
+</tr>
+<tr>
+<td>🖼️ 多模态处理</td>
+<td>理解图片、视频、音频（部分模型）</td>
+</tr>
+<tr>
+<td>🔧 工具调用</td>
+<td>调用外部工具完成复杂任务</td>
+</tr>
+</tbody>
+</table>
+<div class="alert" style="background:#ecfdf5;border-left:4px solid #10b981"><span class="alert-icon">✅</span><strong>技巧</strong><p>可以把大模型想象成一位<strong>通读了互联网大部分文本资料的超级助手</strong>，它通过概率预测"下一个词"来生成回答。</p></div>
+<hr />
+<h2 id="_3">二、主流大模型种类与排名</h2>
+<h3 id="20263">🌍 国际大模型（2026年3月）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">排名</th>
+<th>模型系列</th>
+<th>开发商</th>
+<th>最新旗舰</th>
+<th>核心优势</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">🥇</td>
+<td><strong>GPT</strong></td>
+<td>OpenAI</td>
+<td>GPT-5.2</td>
+<td>最强通用能力，复杂推理领先</td>
+</tr>
+<tr>
+<td style="text-align: center;">🥈</td>
+<td><strong>Claude</strong></td>
+<td>Anthropic</td>
+<td>Claude 4.6 Opus</td>
+<td>长文本精度极高，安全性最佳</td>
+</tr>
+<tr>
+<td style="text-align: center;">🥉</td>
+<td><strong>Gemini</strong></td>
+<td>Google</td>
+<td>Gemini 3 Pro</td>
+<td>多模态最强，Google生态深度整合</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td><strong>Grok</strong></td>
+<td>xAI (Elon Musk)</td>
+<td>Grok 4</td>
+<td>推理基准测试领先，实时信息</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td><strong>Llama</strong></td>
+<td>Meta</td>
+<td>Llama 4</td>
+<td>开源之王，可本地部署</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td><strong>Mistral</strong></td>
+<td>Mistral AI</td>
+<td>Mistral Large 3</td>
+<td>欧洲最强，高性价比开源</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_4">🇨🇳 国内大模型</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">排名</th>
+<th>模型系列</th>
+<th>开发商</th>
+<th>最新版本</th>
+<th>核心优势</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">🥇</td>
+<td><strong>DeepSeek</strong></td>
+<td>深度求索</td>
+<td>DeepSeek-V3/R1</td>
+<td>推理能力突出，开源，极致性价比</td>
+</tr>
+<tr>
+<td style="text-align: center;">🥈</td>
+<td><strong>通义千问</strong></td>
+<td>阿里云</td>
+<td>Qwen3-Max</td>
+<td>全面均衡，中文理解优秀</td>
+</tr>
+<tr>
+<td style="text-align: center;">🥉</td>
+<td><strong>文心一言</strong></td>
+<td>百度</td>
+<td>ERNIE 5.0</td>
+<td>中文素材丰富，百度生态整合</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td><strong>豆包</strong></td>
+<td>字节跳动</td>
+<td>豆包大模型</td>
+<td>多模态能力强，抖音生态</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td><strong>Kimi</strong></td>
+<td>月之暗面</td>
+<td>Kimi k2</td>
+<td>超长上下文，学术文献处理优秀</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td><strong>讯飞星火</strong></td>
+<td>科大讯飞</td>
+<td>星火 4.0</td>
+<td>语音交互、教育领域深耕</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td><strong>GLM</strong></td>
+<td>智谱AI</td>
+<td>GLM-4</td>
+<td>中英双语，学术背景深厚</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">模型家族的"大小号"</h3>
+<p>每个厂商通常提供多个规格的模型：</p>
+<div class="highlight"><pre><span></span><code>┌──────────────────────────────────────────────────────┐
+│  旗舰版（Opus / Pro / Max）                           │
+│  → 最强能力，最贵，适合复杂任务                         │
+├──────────────────────────────────────────────────────┤
+│  标准版（Sonnet / Standard）                          │
+│  → 性价比之选，日常使用首选                             │
+├──────────────────────────────────────────────────────┤
+│  轻量版（Haiku / Flash / Mini）                       │
+│  → 最便宜，速度快，适合简单任务                         │
+└──────────────────────────────────────────────────────┘
+</code></pre></div>
+
+<hr />
+<h2 id="_6">三、价格对比</h2>
+<h3 id="_7">💰 个人订阅价格（月费对比）</h3>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>免费版</th>
+<th>基础版</th>
+<th>标准版</th>
+<th>高级版</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ChatGPT</strong> (OpenAI)</td>
+<td>✅ 有限使用</td>
+<td>Go $8/月</td>
+<td>Plus $20/月</td>
+<td>Pro $200/月</td>
+</tr>
+<tr>
+<td><strong>Claude</strong> (Anthropic)</td>
+<td>✅ 有限使用</td>
+<td>—</td>
+<td>Pro $20/月</td>
+<td>Max $100~200/月</td>
+</tr>
+<tr>
+<td><strong>Gemini</strong> (Google)</td>
+<td>✅ 有限使用</td>
+<td>Plus $8/月</td>
+<td>AI Pro $20/月</td>
+<td>AI Ultra ~$42/月</td>
+</tr>
+<tr>
+<td><strong>通义千问</strong> (阿里)</td>
+<td>✅ 免费</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>文心一言</strong> (百度)</td>
+<td>✅ 免费</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Kimi</strong> (月之暗面)</td>
+<td>✅ 免费</td>
+<td>—</td>
+<td>会员 ¥59/月</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>DeepSeek</strong></td>
+<td>✅ 免费</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<div class="alert" style="background:#eff6ff;border-left:4px solid #3b82f6"><span class="alert-icon">💡</span><strong>提示</strong><p>国内大模型的 <strong>对话功能大多免费</strong>，这是与国际厂商的重大差异。国际厂商付费后能获得更大的使用量和更强模型。</p></div>
+<h3 id="api-token">💻 API 开发者价格（每百万 Token）</h3>
+<h4 id="_8">国际模型</h4>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>输入价格</th>
+<th>输出价格</th>
+<th style="text-align: center;">性价比评级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GPT-5.2</strong></td>
+<td>$1.75</td>
+<td>$14.00</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>GPT-5 Mini</strong></td>
+<td>$0.25</td>
+<td>$2.00</td>
+<td style="text-align: center;">⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>GPT-4o</strong></td>
+<td>$3.00</td>
+<td>$10.00</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>GPT-4o Mini</strong></td>
+<td>$0.15</td>
+<td>$0.60</td>
+<td style="text-align: center;">⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>Claude Opus 4.6</strong></td>
+<td>$5.00</td>
+<td>$25.00</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+<tr>
+<td><strong>Claude Sonnet 4.6</strong></td>
+<td>$3.00</td>
+<td>$15.00</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>Claude Haiku 4.5</strong></td>
+<td>$1.00</td>
+<td>$5.00</td>
+<td style="text-align: center;">⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>Gemini 3 Pro</strong></td>
+<td>$2.00</td>
+<td>$12.00</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>Gemini 3 Flash</strong></td>
+<td>$0.50</td>
+<td>$3.00</td>
+<td style="text-align: center;">⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>Gemini 2.5 Flash-Lite</strong></td>
+<td>$0.10</td>
+<td>$0.40</td>
+<td style="text-align: center;">⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h4 id="token">国内模型（人民币 / 每百万 Token）</h4>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>输入价格</th>
+<th>输出价格</th>
+<th style="text-align: center;">性价比评级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Qwen3-Max (通义千问)</strong></td>
+<td>¥6.00</td>
+<td>¥24.00</td>
+<td style="text-align: center;">⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>ERNIE 5.0 (文心一言)</strong></td>
+<td>¥6.00</td>
+<td>¥10.00</td>
+<td style="text-align: center;">⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>ERNIE 4.0-8K</strong></td>
+<td>¥3.00</td>
+<td>¥9.00</td>
+<td style="text-align: center;">⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>DeepSeek-V3</strong></td>
+<td>¥1.00</td>
+<td>¥2.00</td>
+<td style="text-align: center;">⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>DeepSeek-R1</strong></td>
+<td>¥4.00</td>
+<td>¥16.00</td>
+<td style="text-align: center;">⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<div class="alert" style="background:#f5f3ff;border-left:4px solid #8b5cf6"><span class="alert-icon">❗</span><strong>重要</strong><p>国内模型的 API 价格普遍比国际大模型<strong>便宜 5~20 倍</strong>，这是成本敏感场景下的巨大优势。</p></div>
+<hr />
+<h2 id="token_1">四、Token 是什么？</h2>
+<h3 id="token_2">🔤 Token 的基本概念</h3>
+<p><strong>Token 是大模型处理文本的最小单位</strong>。大模型不是直接读"字"或"词"，而是将文本切分成 Token 后进行处理。</p>
+<div class="highlight"><pre><span></span><code>举例（英文）：
+&quot;Hello, world!&quot; → [&quot;Hello&quot;, &quot;,&quot;, &quot; world&quot;, &quot;!&quot;]  = 4 个 Token
+
+举例（中文）：
+&quot;人工智能改变教育&quot; → [&quot;人工&quot;, &quot;智能&quot;, &quot;改变&quot;, &quot;教育&quot;]  ≈ 4~8 个 Token
+</code></pre></div>
+
+<div class="alert" style="background:#eff6ff;border-left:4px solid #3b82f6"><span class="alert-icon">💡</span><strong>提示</strong><p><strong>经验法则</strong>：
+- 英文：1 个 Token ≈ 4 个字符 ≈ 0.75 个单词
+- 中文：1 个汉字 ≈ 1~2 个 Token
+- 1000 Token ≈ 750 个英文单词 ≈ 500~700 个汉字</p></div>
+<h3 id="token_3">🧩 Token 的种类</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>子词 Token</strong></td>
+<td>最常用，将词拆分为有意义的子片段</td>
+<td>"unhappiness" → ["un", "happi", "ness"]</td>
+</tr>
+<tr>
+<td><strong>词级 Token</strong></td>
+<td>整个单词作为一个 Token</td>
+<td>"hello" → ["hello"]</td>
+</tr>
+<tr>
+<td><strong>字符级 Token</strong></td>
+<td>每个字符是一个 Token</td>
+<td>"hi" → ["h", "i"]</td>
+</tr>
+<tr>
+<td><strong>字节级 Token</strong></td>
+<td>每个字节是一个 Token，支持所有语言</td>
+<td>GPT 系列使用此方式</td>
+</tr>
+<tr>
+<td><strong>特殊 Token</strong></td>
+<td>模型内部标记</td>
+<td><code>&lt;PAD&gt;</code> 填充、<code>&lt;EOS&gt;</code> 结束</td>
+</tr>
+</tbody>
+</table>
+<h3 id="token_4">📊 Token 的三大作用</h3>
+<pre class="mermaid">graph LR
+    A[Token] --> B[💰 计费单位]
+    A --> C[📏 上下文窗口]
+    A --> D[⚡ 性能影响]
+    B --> B1[输入 Token + 输出 Token = 总费用]
+    C --> C1[GPT-5: 128K Token<br/>Claude: 200K Token<br/>Gemini: 2M Token]
+    D --> D1[Token 越多<br/>处理越慢<br/>成本越高]</pre>
+
+<p><strong>上下文窗口</strong>是模型一次能处理的最大 Token 数量：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>上下文窗口</th>
+<th>相当于</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-5.2</td>
+<td>128K Token</td>
+<td>≈ 一本 10 万字小说</td>
+</tr>
+<tr>
+<td>Claude 4.6</td>
+<td>200K Token</td>
+<td>≈ 一本 15 万字小说</td>
+</tr>
+<tr>
+<td>Gemini 3 Pro</td>
+<td>2M Token</td>
+<td>≈ 15 本小说！</td>
+</tr>
+<tr>
+<td>Kimi</td>
+<td>200K+ Token</td>
+<td>≈ 超长学术论文</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="api">五、如何接入大模型 API</h2>
+<h3 id="api_1">🔑 什么是 API？</h3>
+<p><strong>API</strong>（Application Programming Interface，应用程序编程接口）就像一个 <strong>"服务窗口"</strong>——你把请求递进去，模型把结果递出来。</p>
+<pre class="mermaid">graph LR
+    A[你的应用/代码] -->|发送请求| B[API 接口]
+    B -->|转发请求| C[大模型服务器]
+    C -->|返回结果| B
+    B -->|返回结果| A</pre>
+
+<h3 id="openai">📋 接入步骤（以 OpenAI 为例）</h3>
+<h4 id="1-api-key">第 1 步：注册并获取 API Key</h4>
+<div class="highlight"><pre><span></span><code>1. 访问 https://platform.openai.com/
+2. 注册账号并登录
+3. 进入 API Keys 页面
+4. 点击 &quot;Create new secret key&quot;
+5. 复制并安全保存你的 API Key（sk-xxxx...）
+</code></pre></div>
+
+<div class="alert" style="background:#fef2f2;border-left:4px solid #ef4444"><span class="alert-icon">🔴</span><strong>注意</strong><p><strong>API Key 就像密码，绝不能泄露！</strong> 不要把它写在公开代码里或分享给他人。</p></div>
+<h4 id="2-api">第 2 步：发送第一个 API 请求</h4>
+<p><strong>Python 代码示例：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 安装: pip install openai</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAI</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;sk-你的密钥&quot;</span><span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-5.2&quot;</span><span class="p">,</span>           <span class="c1"># 选择模型</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;你是一位教育专家&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;请帮我设计一个小学数学教案&quot;</span><span class="p">}</span>
+    <span class="p">],</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>            <span class="c1"># 最大输出 Token 数</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span>             <span class="c1"># 创造性程度（0=保守，1=创新）</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+
+<h4 id="3">第 3 步：理解关键参数</h4>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>建议值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>model</code></td>
+<td>选择使用的模型</td>
+<td>根据需求选择</td>
+</tr>
+<tr>
+<td><code>messages</code></td>
+<td>对话消息列表</td>
+<td>system + user 角色</td>
+</tr>
+<tr>
+<td><code>max_tokens</code></td>
+<td>限制输出长度</td>
+<td>500~4000</td>
+</tr>
+<tr>
+<td><code>temperature</code></td>
+<td>控制随机性/创造性</td>
+<td>教案：0.7，代码：0.2</td>
+</tr>
+<tr>
+<td><code>top_p</code></td>
+<td>控制输出多样性</td>
+<td>通常 0.9~1.0</td>
+</tr>
+</tbody>
+</table>
+<h3 id="api_2">🇨🇳 国内大模型 API 接入</h3>
+<p>国内模型的接入方式非常相似，且大多<strong>兼容 OpenAI 的 API 格式</strong>：</p>
+<div class="carousel" id="carousel_1">
+  <div class="slides-container"><div class="slide active" data-index="0"><p><strong>通义千问 (阿里云)</strong></p>
+<pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(
+    api_key=&quot;sk-你的密钥&quot;,
+    base_url=&quot;https://dashscope.aliyuncs.com/compatible-mode/v1&quot;
+)
+
+response = client.chat.completions.create(
+    model=&quot;qwen-max&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;你好&quot;}]
+)
+</code></pre>
+<p>注册地址：https://dashscope.console.aliyun.com/</p></div><div class="slide" data-index="1"><p><strong>DeepSeek</strong></p>
+<pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(
+    api_key=&quot;sk-你的密钥&quot;,
+    base_url=&quot;https://api.deepseek.com&quot;
+)
+
+response = client.chat.completions.create(
+    model=&quot;deepseek-chat&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;你好&quot;}]
+)
+</code></pre>
+<p>注册地址：https://platform.deepseek.com/</p></div><div class="slide" data-index="2"><p><strong>文心一言 (百度)</strong></p>
+<pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(
+    api_key=&quot;你的API密钥&quot;,
+    base_url=&quot;https://aip.baidubce.com/rpc/2.0/ai_custom/v1&quot;
+)
+
+# 或使用百度专用 SDK
+# pip install qianfan
+import qianfan
+chat = qianfan.ChatCompletion()
+resp = chat.do(model=&quot;ERNIE-5.0&quot;, messages=[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;你好&quot;}])
+</code></pre>
+<p>注册地址：https://cloud.baidu.com/product/wenxinworkshop</p></div></div>
+  <button class="carousel-btn prev" onclick="changeSlide('carousel_1',-1)">❮</button>
+  <button class="carousel-btn next" onclick="changeSlide('carousel_1',1)">❯</button>
+  <div class="dots"><span class="dot active" onclick="goToSlide('carousel_1',0)"></span><span class="dot" onclick="goToSlide('carousel_1',1)"></span><span class="dot" onclick="goToSlide('carousel_1',2)"></span></div>
+</div>
+
+<h3 id="api_3">💡 不写代码也能用 API？</h3>
+<p>对于不熟悉编程的老师，有以下替代方案：</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>说明</th>
+<th>适合人群</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ChatGPT / Claude / Gemini 官网</strong></td>
+<td>直接对话，无需编程</td>
+<td>所有老师</td>
+</tr>
+<tr>
+<td><strong>Cursor / GitHub Copilot</strong></td>
+<td>AI 编程助手</td>
+<td>信息技术老师</td>
+</tr>
+<tr>
+<td><strong>Dify / Coze</strong></td>
+<td>可视化搭建 AI 应用</td>
+<td>有一定技术基础的老师</td>
+</tr>
+<tr>
+<td><strong>API 中转平台</strong></td>
+<td>简化 API 调用流程</td>
+<td>开发者</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="ai-agentic-coding">六、AI 编程助手（Agentic Coding）</h2>
+<h3 id="ai_1">🤔 什么是 AI 编程助手？</h3>
+<p>与普通的大模型对话不同，<strong>AI 编程助手</strong>（也叫 Agentic Coding 工具）能够<strong>直接读写你的代码文件、运行命令、调试错误</strong>——像一个真正的编程搭档。</p>
+<h3 id="_9">📊 三大类别对比</h3>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>代表工具</th>
+<th>工作方式</th>
+<th>适合人群</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AI 代码编辑器</strong></td>
+<td><strong>Cursor</strong>、Windsurf、Trae</td>
+<td>完整 IDE，内嵌 AI 对话和代码生成</td>
+<td>所有开发者</td>
+</tr>
+<tr>
+<td><strong>AI 编程 CLI</strong></td>
+<td><strong>Claude Code</strong>、<strong>Codex CLI</strong>、Aider</td>
+<td>命令行中运行，终端内 AI 改代码</td>
+<td>有终端经验的开发者</td>
+</tr>
+<tr>
+<td><strong>IDE 插件 / 副驾驶</strong></td>
+<td><strong>GitHub Copilot</strong>、Codeium、Tabnine</td>
+<td>嵌入现有 IDE 的代码补全插件</td>
+<td>已有 IDE 习惯的开发者</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">🏆 主流工具详细对比</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th><strong>Cursor</strong></th>
+<th><strong>Claude Code</strong></th>
+<th><strong>Codex CLI</strong></th>
+<th><strong>GitHub Copilot</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>开发商</strong></td>
+<td>Anysphere</td>
+<td>Anthropic</td>
+<td>OpenAI</td>
+<td>GitHub/Microsoft</td>
+</tr>
+<tr>
+<td><strong>底层模型</strong></td>
+<td>Claude/GPT 可选</td>
+<td>Claude 4.6</td>
+<td>GPT-5</td>
+<td>GPT/Claude 可选</td>
+</tr>
+<tr>
+<td><strong>界面</strong></td>
+<td>图形化编辑器</td>
+<td>命令行终端</td>
+<td>命令行终端</td>
+<td>VS Code 插件</td>
+</tr>
+<tr>
+<td><strong>文件读写</strong></td>
+<td>✅ 自动</td>
+<td>✅ 自动</td>
+<td>✅ 自动</td>
+<td>⚠️ 有限</td>
+</tr>
+<tr>
+<td><strong>运行命令</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>多文件编辑</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>⚠️ 单文件为主</td>
+</tr>
+<tr>
+<td><strong>免费额度</strong></td>
+<td>有限免费</td>
+<td>需 API Key</td>
+<td>需 API Key</td>
+<td>免费版可用</td>
+</tr>
+<tr>
+<td><strong>价格</strong></td>
+<td>$20/月 Pro</td>
+<td>按 Token 计费</td>
+<td>按 Token 计费</td>
+<td>$10/月</td>
+</tr>
+</tbody>
+</table>
+<div class="alert" style="background:#ecfdf5;border-left:4px solid #10b981"><span class="alert-icon">✅</span><strong>技巧</strong><p><strong>对于教师入门</strong>：推荐从 <strong>Cursor</strong>（图形界面友好）或 <strong>Claude Code</strong>（Anthropic 官方出品，能力最强）开始。</p></div>
+<hr />
+<h2 id="ai-agent">七、智能体（AI Agent）的搭建</h2>
+<h3 id="ai_2">🤔 什么是 AI 智能体？</h3>
+<p><strong>智能体 = 大模型 + 工具 + 记忆 + 自主决策</strong></p>
+<p>普通大模型只能"对话"，而智能体能够<strong>自主规划、调用工具、完成复杂任务</strong>。</p>
+<pre class="mermaid">graph TB
+    A[用户指令] --> B[AI 智能体]
+    B --> C{理解与规划}
+    C --> D[调用工具]
+    C --> E[查询知识库]
+    C --> F[执行代码]
+    D --> G[返回结果]
+    E --> G
+    F --> G
+    G --> H{任务完成?}
+    H -->|否| C
+    H -->|是| I[输出最终结果]
+    
+    style B fill:#f9f,stroke:#333,stroke-width:2px</pre>
+
+<h3 id="_11">🛠️ 主流智能体搭建平台对比</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th><strong>Dify</strong></th>
+<th><strong>Coze (扣子)</strong></th>
+<th><strong>LangChain</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>开发商</strong></td>
+<td>开源社区</td>
+<td>字节跳动</td>
+<td>LangChain Inc.</td>
+</tr>
+<tr>
+<td><strong>上手难度</strong></td>
+<td>⭐⭐（低代码）</td>
+<td>⭐（零代码）</td>
+<td>⭐⭐⭐⭐（需编程）</td>
+</tr>
+<tr>
+<td><strong>可视化界面</strong></td>
+<td>✅ 拖拽式</td>
+<td>✅ 拖拽式</td>
+<td>❌ 纯代码</td>
+</tr>
+<tr>
+<td><strong>模型支持</strong></td>
+<td>GPT/Claude/Gemini/国内模型</td>
+<td>GPT/豆包/自定义</td>
+<td>1000+ 集成</td>
+</tr>
+<tr>
+<td><strong>知识库/RAG</strong></td>
+<td>✅ 强大</td>
+<td>✅ 内置</td>
+<td>✅ 灵活</td>
+</tr>
+<tr>
+<td><strong>部署方式</strong></td>
+<td>私有/云端</td>
+<td>云端</td>
+<td>私有/云端</td>
+</tr>
+<tr>
+<td><strong>适合人群</strong></td>
+<td>开发者 / 技术爱好者</td>
+<td>普通用户 / 教师</td>
+<td>专业开发者</td>
+</tr>
+<tr>
+<td><strong>费用</strong></td>
+<td>开源免费（云端付费）</td>
+<td>免费（高级功能付费）</td>
+<td>开源免费</td>
+</tr>
+<tr>
+<td><strong>中文支持</strong></td>
+<td>✅ 优秀</td>
+<td>✅ 优秀</td>
+<td>⚠️ 一般</td>
+</tr>
+</tbody>
+</table>
+<h3 id="coze">🎯 用 Coze (扣子) 零代码搭建智能体</h3>
+<p><strong>Coze 最适合教师使用</strong>，下面是搭建步骤：</p>
+<div class="highlight"><pre><span></span><code>步骤 1️⃣  访问 https://www.coze.cn/ 并注册账号
+
+步骤 2️⃣  点击 &quot;创建 Bot&quot;
+         → 填写名称（如：&quot;数学教案助手&quot;）
+         → 编写 Prompt（角色设定）
+
+步骤 3️⃣  配置知识库
+         → 上传教材 PDF、教案模板
+         → 系统自动建立检索索引
+
+步骤 4️⃣  添加插件工具
+         → 联网搜索、图片生成、代码执行等
+
+步骤 5️⃣  测试与发布
+         → 在对话窗口测试效果
+         → 发布到微信、飞书、网页等渠道
+</code></pre></div>
+
+<h3 id="_12">📚 教师智能体应用示例</h3>
+<table>
+<thead>
+<tr>
+<th>智能体名称</th>
+<th>功能描述</th>
+<th style="text-align: center;">搭建难度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>📝 <strong>教案生成助手</strong></td>
+<td>根据课标自动生成教案</td>
+<td style="text-align: center;">⭐</td>
+</tr>
+<tr>
+<td>✅ <strong>作业批改助手</strong></td>
+<td>自动批改主观题并给出评语</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+<tr>
+<td>📖 <strong>阅读理解训练器</strong></td>
+<td>生成阅读题目并自动评分</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+<tr>
+<td>🎯 <strong>个性化学习顾问</strong></td>
+<td>根据学生薄弱点推荐练习</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td>🌐 <strong>翻译与语法纠错</strong></td>
+<td>英语作文批改和改写建议</td>
+<td style="text-align: center;">⭐</td>
+</tr>
+<tr>
+<td>📊 <strong>成绩分析报告</strong></td>
+<td>自动分析班级成绩并生成报告</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="mcp-ida-pro">八、MCP 协议与工具集成（以 IDA Pro 逆向为例）</h2>
+<h3 id="mcp">🔌 什么是 MCP？</h3>
+<p><strong>MCP（Model Context Protocol，模型上下文协议）</strong>是 Anthropic 于 2024 年推出的开放标准，目标是让 AI 能够<strong>连接任何外部工具和数据源</strong>。</p>
+<blockquote>
+<p>可以把 MCP 理解为 <strong>“AI 的 USB-C 接口”</strong>——就像 USB-C 让任何设备都能通过统一接口传输数据，MCP 让任何 AI 模型都能通过统一协议调用外部工具。</p>
+</blockquote>
+<pre class="mermaid">graph LR
+    A[AI 客户端] <-->|“MCP 协议”| B[MCP 服务器]
+    B <--> C[📂 文件系统]
+    B <--> D[🗄️ 数据库]
+    B <--> E[🔧 IDA Pro]
+    B <--> F[🌐 网页浏览器]
+    B <--> G[📧 Slack / 飞书]
+    
+    style A fill:#e3f2fd
+    style B fill:#fff3e0</pre>
+
+<h3 id="mcp_1">🛠️ MCP 的核心架构</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>角色</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MCP Host（宿主）</strong></td>
+<td>运行 AI 的应用程序</td>
+<td>Claude Code、Cursor、VS Code</td>
+</tr>
+<tr>
+<td><strong>MCP Client（客户端）</strong></td>
+<td>在 Host 内负责通信</td>
+<td>内置于 Host，无需配置</td>
+</tr>
+<tr>
+<td><strong>MCP Server（服务器）</strong></td>
+<td>提供工具和数据的服务</td>
+<td>IDA Pro MCP、数据库 MCP、文件系统 MCP</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mcp_2">📦 常见 MCP 服务器类型</h3>
+<table>
+<thead>
+<tr>
+<th>MCP Server</th>
+<th>功能</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Filesystem MCP</strong></td>
+<td>读写文件、目录查看</td>
+<td>文档处理、代码分析</td>
+</tr>
+<tr>
+<td><strong>Database MCP</strong></td>
+<td>查询数据库、获取 Schema</td>
+<td>数据分析、报表生成</td>
+</tr>
+<tr>
+<td><strong>Browser MCP (Playwright)</strong></td>
+<td>操控浏览器、截图、测试</td>
+<td>网页自动化、UI 测试</td>
+</tr>
+<tr>
+<td><strong>IDA Pro MCP</strong></td>
+<td>反编译、反汇编、交叉引用</td>
+<td>⭐ 逆向工程自动化</td>
+</tr>
+<tr>
+<td><strong>JADX MCP</strong></td>
+<td>Android APK 反编译</td>
+<td>Android 应用分析</td>
+</tr>
+<tr>
+<td><strong>Slack / Notion MCP</strong></td>
+<td>读取团队消息和文档</td>
+<td>团队协作</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="ida-pro-mcp">🔍 实战：IDA Pro MCP 搭建自动化逆向小能手</h3>
+<h4 id="ida-pro-mcp_1">什么是 IDA Pro MCP？</h4>
+<p><strong>IDA Pro</strong> 是世界最知名的逆向工程工具，通过 MCP 协议接入后，AI 可以直接：</p>
+<table>
+<thead>
+<tr>
+<th>AI 能力</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>📝 自动反编译</td>
+<td>将二进制函数转为可读伪代码</td>
+</tr>
+<tr>
+<td>🏷️ 自动命名</td>
+<td>给函数/变量取有意义的名字</td>
+</tr>
+<tr>
+<td>🔗 交叉引用分析</td>
+<td>追踪函数调用关系</td>
+</tr>
+<tr>
+<td>📊 结构体识别</td>
+<td>自动识别和创建数据结构</td>
+</tr>
+<tr>
+<td>💬 添加注释</td>
+<td>为代码添加解释性注释</td>
+</tr>
+<tr>
+<td>🔍 搜索字符串/字节</td>
+<td>在二进制中搜索特定模式</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_13">安装与配置步骤</h4>
+<div class="carousel" id="carousel_2">
+  <div class="slides-container"><div class="slide active" data-index="0"><p><strong>第 1 步：安装 IDA Pro MCP 服务器</strong></p>
+<pre><code class="language-bash"># 方式一：PIP 安装
+pip install ida-pro-mcp
+
+# 方式二：uvx 直接运行（无需安装）
+uvx mcp-server-ida
+</code></pre>
+<p>将 IDA 插件文件复制到 IDA 插件目录：</p>
+<pre><code>Windows: %APPDATA%\Hex-Rays\IDA Pro\plugins\
+macOS:   ~/Library/Application Support/Hex-Rays/IDA Pro/plugins/
+</code></pre></div><div class="slide" data-index="1"><p><strong>第 2 步：在 IDA Pro 中启动 MCP 服务器</strong></p>
+<pre><code>1. 打开 IDA Pro，加载要分析的二进制文件
+2. 等待自动分析完成
+3. Edit → Plugins → IDA-MCP
+4. 控制台显示 &quot;MCP Server started on port 7000&quot;
+</code></pre></div><div class="slide" data-index="2"><p><strong>第 3 步：配置 AI 客户端连接 MCP</strong></p>
+<p>在 Claude Code 或 Cursor 的 MCP 配置文件中添加：</p>
+<pre><code class="language-json">// .vscode/mcp.json 或 Claude Code 配置
+{
+  &quot;servers&quot;: {
+    &quot;ida-pro-mcp&quot;: {
+      &quot;command&quot;: &quot;uvx&quot;,
+      &quot;args&quot;: [&quot;mcp-server-ida&quot;]
+    }
+  }
+}
+</code></pre>
+<p>或在 Cursor 中：</p>
+<pre><code>Settings → MCP Servers → Add Server
+→ Name: ida-pro-mcp
+→ Command: uvx mcp-server-ida
+</code></pre></div></div>
+  <button class="carousel-btn prev" onclick="changeSlide('carousel_2',-1)">❮</button>
+  <button class="carousel-btn next" onclick="changeSlide('carousel_2',1)">❯</button>
+  <div class="dots"><span class="dot active" onclick="goToSlide('carousel_2',0)"></span><span class="dot" onclick="goToSlide('carousel_2',1)"></span><span class="dot" onclick="goToSlide('carousel_2',2)"></span></div>
+</div>
+
+<h4 id="ai_3">使用示例：AI 自动分析二进制</h4>
+<p>配置完成后，你可以直接用自然语言让 AI 做逆向分析：</p>
+<div class="highlight"><pre><span></span><code>&gt; 请分析 main 函数的逻辑，反编译并解释每个步骤
+
+&gt; 查找所有引用了 &quot;password&quot; 字符串的函数，分析密码验证逻辑
+
+&gt; 把这个函数的所有变量和函数重命名为有意义的名字
+
+&gt; 分析这个程序的调用图，找出核心处理流程
+</code></pre></div>
+
+<p>AI 会通过 MCP 协议自动调用 IDA Pro 的各项功能（反编译、交叉引用、重命名等），然后用自然语言给你解释结果。</p>
+<div class="alert" style="background:#ecfdf5;border-left:4px solid #10b981"><span class="alert-icon">✅</span><strong>技巧</strong><p><strong>MCP 的强大之处</strong>在于——同一个 AI 助手可以同时接入多个 MCP Server。例如同时连接 IDA Pro + 数据库 + 浏览器，让 AI 在逆向分析的同时查询漏洞库和在线文档。</p></div>
+<hr />
+<h2 id="claude-token">九、🔬 实训：获取免费 Claude Token 并搭建智能体</h2>
+<blockquote>
+<p>本章为<strong>动手实训环节</strong>，我们将从零开始：获取免费的 Claude Opus 4.6 API Token → 安装 AI 编程助手 → 用 AI 编写一个教育智能体。</p>
+</blockquote>
+<h3 id="_14">📋 实训前准备</h3>
+<table>
+<thead>
+<tr>
+<th>准备项</th>
+<th>要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>💻 电脑</td>
+<td>Windows / Mac / Linux 均可</td>
+</tr>
+<tr>
+<td>🌐 网络</td>
+<td>能访问 claude.ai（国际网络）</td>
+</tr>
+<tr>
+<td>📧 邮箱</td>
+<td>用于注册 Anthropic 账号</td>
+</tr>
+<tr>
+<td>⏱️ 时间</td>
+<td>约 30~60 分钟</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="claude-opus-46-api-token">第一部分：获取免费 Claude Opus 4.6 API Token</h3>
+<h4 id="anthropic">方式一：Anthropic 开发者免费额度（推荐 ⭐）</h4>
+<div class="highlight"><pre><span></span><code>步骤 1️⃣  访问 https://console.anthropic.com/ 注册开发者账号
+
+步骤 2️⃣  完成邮箱验证和手机验证
+
+步骤 3️⃣  进入 Dashboard → API Keys
+         → 点击 &quot;Create Key&quot;
+         → 命名为 &quot;teacher-training&quot;
+         → 复制密钥（以 sk-ant- 开头）
+
+步骤 4️⃣  新账号自动获得 $5 免费额度
+         → 足够进行数百次 API 调用
+         → 可在 Usage 页面查看余额
+</code></pre></div>
+
+<div class="alert" style="background:#ecfdf5;border-left:4px solid #10b981"><span class="alert-icon">✅</span><strong>技巧</strong><p>$5 免费额度使用 Claude Opus 4.6 约可处理 <strong>20 万输入 Token + 4 万输出 Token</strong>，相当于让 AI 帮你写约 3 万字的内容。</p></div>
+<h4 id="google-cloud-300">方式二：Google Cloud 赠送 $300 额度</h4>
+<div class="highlight"><pre><span></span><code>步骤 1️⃣  访问 https://cloud.google.com/ 注册新账号
+
+步骤 2️⃣  新用户自动获得 $300 免费额度（90天有效）
+
+步骤 3️⃣  在 Google Cloud 中通过 Vertex AI 调用 Claude 模型
+         → 搜索 &quot;Vertex AI&quot; → Model Garden → Claude
+</code></pre></div>
+
+<h4 id="claudeai">方式三：通过 Claude.ai 免费对话使用</h4>
+<div class="highlight"><pre><span></span><code>步骤 1️⃣  访问 https://claude.ai 注册免费账号
+
+步骤 2️⃣  免费版可直接使用 Claude Sonnet 4.6
+         → 每天有限次数的 Opus 4.6 访问
+         → 每 5 小时重置使用额度
+
+（此方式无需 API Key，但不能编程调用）
+</code></pre></div>
+
+<div class="alert" style="background:#fef2f2;border-left:4px solid #ef4444"><span class="alert-icon">🔴</span><strong>注意</strong><p><strong>请妥善保管你的 API Key！</strong> 不要截图分享、不要写在公开文件中。泄露后他人可使用你的额度，且可能产生费用。</p></div>
+<hr />
+<h3 id="ai-claude-code">第二部分：安装 AI 编程助手 (Claude Code)</h3>
+<h4 id="_15">环境安装</h4>
+<div class="carousel" id="carousel_3">
+  <div class="slides-container"><div class="slide active" data-index="0"><p><strong>第 1 步：安装 Node.js</strong></p>
+<p>访问 https://nodejs.org/ 下载并安装 <strong>LTS 版本</strong>（v18 或更高）</p>
+<p>安装完成后验证：</p>
+<pre><code class="language-bash">node --version    # 应显示 v18.x 或更高
+npm --version     # 应显示 9.x 或更高
+</code></pre></div><div class="slide" data-index="1"><p><strong>第 2 步：安装 Claude Code</strong></p>
+<p>打开终端（Windows: PowerShell，Mac: Terminal），执行：</p>
+<pre><code class="language-bash">npm install -g @anthropic-ai/claude-code
+</code></pre>
+<p>验证安装：</p>
+<pre><code class="language-bash">claude --version
+claude doctor      # 检查环境是否正常
+</code></pre></div><div class="slide" data-index="2"><p><strong>第 3 步：配置 API Key</strong></p>
+<p>在项目目录创建 <code>.env</code> 文件：</p>
+<pre><code class="language-bash"># 在项目文件夹中执行
+echo ANTHROPIC_API_KEY=sk-ant-你的密钥 &gt; .env
+</code></pre>
+<p>或设置环境变量（推荐）：</p>
+<pre><code class="language-bash"># Windows PowerShell
+$env:ANTHROPIC_API_KEY = &quot;sk-ant-你的密钥&quot;
+
+# Mac/Linux
+export ANTHROPIC_API_KEY=&quot;sk-ant-你的密钥&quot;
+</code></pre></div></div>
+  <button class="carousel-btn prev" onclick="changeSlide('carousel_3',-1)">❮</button>
+  <button class="carousel-btn next" onclick="changeSlide('carousel_3',1)">❯</button>
+  <div class="dots"><span class="dot active" onclick="goToSlide('carousel_3',0)"></span><span class="dot" onclick="goToSlide('carousel_3',1)"></span><span class="dot" onclick="goToSlide('carousel_3',2)"></span></div>
+</div>
+
+<h4 id="cursor">替代方案：使用 Cursor（图形界面）</h4>
+<p>如果不习惯命令行，可以选择 <strong>Cursor</strong>：</p>
+<div class="highlight"><pre><span></span><code>1. 访问 https://cursor.com/ 下载安装
+2. 打开 Cursor → Settings → Models
+3. 添加 Anthropic API Key
+4. 选择 Claude Opus 4.6 作为默认模型
+5. 在编辑器中按 Ctrl+K 即可 AI 辅助编程
+</code></pre></div>
+
+<hr />
+<h3 id="ai_4">第三部分：用 AI 编程助手搭建教育智能体</h3>
+<h4 id="_16">🎯 实训目标</h4>
+<p>用 Claude Code 编写一个<strong>「课堂小测验生成器」智能体</strong>——输入知识点，自动生成选择题、填空题和简答题。</p>
+<h4 id="1">步骤 1：创建项目</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 创建项目文件夹</span>
+mkdir<span class="w"> </span>quiz-generator-agent
+<span class="nb">cd</span><span class="w"> </span>quiz-generator-agent
+
+<span class="c1"># 启动 Claude Code</span>
+claude
+</code></pre></div>
+
+<h4 id="2">步骤 2：用自然语言描述需求</h4>
+<p>在 Claude Code 终端中，直接用中文描述你的需求：</p>
+<div class="highlight"><pre><span></span><code>&gt; 请帮我创建一个 Python 项目「课堂小测验生成器」，要求：
+&gt;
+&gt; 1. 使用 Anthropic API 调用 Claude 模型
+&gt; 2. 用户输入：学科、年级、知识点
+&gt; 3. 自动生成：5道选择题 + 3道填空题 + 2道简答题
+&gt; 4. 输出格式化的试卷（带答案和不带答案两个版本）
+&gt; 5. 支持导出为 Word 文档
+&gt; 6. 提供一个简单的网页界面
+</code></pre></div>
+
+<p>Claude Code 会<strong>自动</strong>完成以下工作：</p>
+<pre class="mermaid">graph TB
+    A[理解需求] --> B[创建项目结构]
+    B --> C[编写 quiz_generator.py]
+    B --> D[编写 web_app.py]
+    B --> E[创建 HTML 模板]
+    C --> F[安装依赖包]
+    D --> F
+    F --> G[自动测试运行]
+    G --> H[修复发现的问题]
+    H --> I[✅ 完成！]
+    
+    style A fill:#e1f5fe
+    style I fill:#c8e6c9</pre>
+
+<h4 id="3claude-code">步骤 3：Claude Code 生成的核心代码（示例）</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># quiz_generator.py —— Claude Code 自动生成</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">anthropic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Anthropic</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Anthropic</span><span class="p">()</span>  <span class="c1"># 自动读取环境变量中的 API Key</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_quiz</span><span class="p">(</span><span class="n">subject</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;根据学科、年级和知识点生成测验题目&quot;&quot;&quot;</span>
+
+    <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;你是一位经验丰富的</span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">教师，请为</span><span class="si">{</span><span class="n">grade</span><span class="si">}</span><span class="s2">学生</span>
+<span class="s2">    针对「</span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s2">」知识点生成一套测验：</span>
+
+<span class="s2">    要求：</span>
+<span class="s2">    - 5道选择题（4个选项，标注正确答案）</span>
+<span class="s2">    - 3道填空题（给出答案）</span>
+<span class="s2">    - 2道简答题（给出参考答案）</span>
+
+<span class="s2">    请用 JSON 格式返回。&quot;&quot;&quot;</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-opus-4-6-20260301&quot;</span><span class="p">,</span>  <span class="c1"># 使用 Opus 4.6</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parse_quiz_response</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="c1"># 使用示例</span>
+<span class="n">quiz</span> <span class="o">=</span> <span class="n">generate_quiz</span><span class="p">(</span><span class="s2">&quot;数学&quot;</span><span class="p">,</span> <span class="s2">&quot;初二&quot;</span><span class="p">,</span> <span class="s2">&quot;一次函数&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已生成 </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">quiz</span><span class="p">[</span><span class="s1">&#39;选择题&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2"> 道选择题&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h4 id="4">步骤 4：运行并测试</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Claude Code 会自动帮你安装依赖和运行</span>
+<span class="c1"># 你也可以手动执行：</span>
+pip<span class="w"> </span>install<span class="w"> </span>anthropic<span class="w"> </span>flask<span class="w"> </span>python-docx
+python<span class="w"> </span>web_app.py
+
+<span class="c1"># 然后在浏览器访问 http://localhost:5000</span>
+</code></pre></div>
+
+<h4 id="5">步骤 5：迭代优化</h4>
+<p>继续在 Claude Code 中用自然语言提出修改需求：</p>
+<div class="highlight"><pre><span></span><code>&gt; 请添加以下功能：
+&gt; 1. 题目难度可选（简单/中等/困难）
+&gt; 2. 支持批量生成多套试卷
+&gt; 3. 加入题目查重，避免重复
+</code></pre></div>
+
+<p>Claude Code 会自动定位代码、修改、测试——<strong>你全程只需要用中文描述需求</strong>。</p>
+<hr />
+<h3 id="_17">实训小结</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">步骤</th>
+<th>内容</th>
+<th style="text-align: center;">耗时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td>注册 Anthropic 账号并获取免费 API Key</td>
+<td style="text-align: center;">5 分钟</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td>安装 Node.js 和 Claude Code</td>
+<td style="text-align: center;">10 分钟</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td>用自然语言描述需求，AI 自动编码</td>
+<td style="text-align: center;">10 分钟</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td>运行测试并迭代优化</td>
+<td style="text-align: center;">10 分钟</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>合计</strong></td>
+<td><strong>从零到拥有一个可用的教育智能体</strong></td>
+<td style="text-align: center;"><strong>~35 分钟</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="alert" style="background:#f5f3ff;border-left:4px solid #8b5cf6"><span class="alert-icon">❗</span><strong>重要</strong><p>这就是 <strong>Agentic Coding 的魅力</strong>——你不需要会编程，只需要<strong>会描述需求</strong>，AI 编程助手就能帮你把想法变成可运行的应用。</p></div>
+<hr />
+<h3 id="mcp-ida-pro_1">🌟 进阶实训：MCP + IDA Pro 搭建逆向分析智能体</h3>
+<p>如果你对安全研究/逆向工程感兴趣，可以尝试配置 IDA Pro MCP，让 AI 成为你的“逆向分析助手”。</p>
+<h4 id="_18">快速配置</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. 安装 MCP Server</span>
+pip<span class="w"> </span>install<span class="w"> </span>ida-pro-mcp
+
+<span class="c1"># 2. 将插件复制到 IDA Pro 插件目录</span>
+<span class="c1">#    Windows: %APPDATA%\Hex-Rays\IDA Pro\plugins\</span>
+
+<span class="c1"># 3. 在 IDA Pro 中启动: Edit → Plugins → IDA-MCP</span>
+
+<span class="c1"># 4. 在 Claude Code 中连接（自动识别配置的 MCP Server）</span>
+claude
+</code></pre></div>
+
+<h4 id="_19">实战对话示例</h4>
+<div class="highlight"><pre><span></span><code>你：反编译 main 函数，解释每一步的作用
+
+AI：已反编译 main 函数，以下是分析结果：
+    1. 初始化配置文件...
+    2. 建立网络连接...
+    3. 进入主循环处理请求...
+    我已将所有变量重命名为有意义的名称并添加了注释。
+
+你：查找所有引用“encrypt”字符串的函数，分析加密算法
+
+AI：找到 3 个相关函数，使用的是 AES-256-CBC 加密...
+</code></pre></div>
+
+<div class="alert" style="background:#eff6ff;border-left:4px solid #3b82f6"><span class="alert-icon">💡</span><strong>提示</strong><p>这个进阶实训需要拥有 <strong>IDA Pro 正版授权</strong>（v8.3+）。如果没有 IDA Pro，也可以使用免费的 JADX MCP 进行 Android APK 逆向分析，配置方式类似。</p></div>
+<hr />
+<h2 id="_20">十、教育领域应用建议</h2>
+<h3 id="_21">✅ 推荐使用方案</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐工具</th>
+<th>预算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>日常备课</strong></td>
+<td>ChatGPT / Kimi / 通义千问（免费版）</td>
+<td>免费</td>
+</tr>
+<tr>
+<td><strong>论文写作辅助</strong></td>
+<td>Claude（长文能力最强）</td>
+<td>$20/月</td>
+</tr>
+<tr>
+<td><strong>批量处理学生文档</strong></td>
+<td>DeepSeek API（最便宜）</td>
+<td>几元/月</td>
+</tr>
+<tr>
+<td><strong>搭建教学工具</strong></td>
+<td>Coze 扣子（零代码）/ Claude Code</td>
+<td>免费</td>
+</tr>
+<tr>
+<td><strong>编程教学</strong></td>
+<td>Cursor + Claude Opus 4.6</td>
+<td>$20/月</td>
+</tr>
+<tr>
+<td><strong>多模态教学</strong></td>
+<td>Gemini（图片/视频理解）</td>
+<td>免费/$20/月</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_22">⚠️ 注意事项</h3>
+<div class="alert" style="background:#fff7ed;border-left:4px solid #f59e0b"><span class="alert-icon">⚠️</span><strong>警告</strong><ol>
+<li><strong>AI 可能产生错误信息</strong>（"幻觉"），关键内容请务必人工核实</li>
+<li><strong>保护学生隐私</strong>——不要将学生个人信息上传给商用 AI</li>
+<li><strong>注意版权问题</strong>——AI 生成内容的版权归属尚有争议</li>
+<li><strong>培养批判性思维</strong>——教会学生辨别 AI 输出的可靠性</li>
+</ol></div>
+<hr />
+<h2 id="_23">📎 附录：常用链接</h2>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>官网地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ChatGPT</td>
+<td>https://chat.openai.com</td>
+</tr>
+<tr>
+<td>Claude</td>
+<td>https://claude.ai</td>
+</tr>
+<tr>
+<td>Claude API 控制台</td>
+<td>https://console.anthropic.com</td>
+</tr>
+<tr>
+<td>Claude Code</td>
+<td><code>npm install -g @anthropic-ai/claude-code</code></td>
+</tr>
+<tr>
+<td>Cursor</td>
+<td>https://cursor.com</td>
+</tr>
+<tr>
+<td>Gemini</td>
+<td>https://gemini.google.com</td>
+</tr>
+<tr>
+<td>DeepSeek</td>
+<td>https://chat.deepseek.com</td>
+</tr>
+<tr>
+<td>通义千问</td>
+<td>https://tongyi.aliyun.com</td>
+</tr>
+<tr>
+<td>文心一言</td>
+<td>https://yiyan.baidu.com</td>
+</tr>
+<tr>
+<td>Kimi</td>
+<td>https://kimi.moonshot.cn</td>
+</tr>
+<tr>
+<td>Coze 扣子</td>
+<td>https://www.coze.cn</td>
+</tr>
+<tr>
+<td>Dify</td>
+<td>https://dify.ai</td>
+</tr>
+<tr>
+<td>GitHub Copilot</td>
+<td>https://github.com/features/copilot</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<blockquote>
+<p>💡 <strong>总结一句话</strong>：大模型正在重塑教育的每一个环节。作为教师，不必成为技术专家，但了解这些工具的基本原理和使用方法，将帮助我们更好地服务学生、提升教学效率。<strong>而借助 AI 编程助手，即使不会编程，你也能把教学创意变成真正可用的工具。</strong></p>
+</blockquote>
+
+<!-- Mermaid.js -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#dbeafe',
+      primaryTextColor: '#1e293b',
+      primaryBorderColor: '#3b82f6',
+      lineColor: '#64748b',
+      secondaryColor: '#f0fdf4',
+      tertiaryColor: '#fef3c7',
+      fontSize: '14px',
+      fontFamily: 'Noto Sans SC, sans-serif'
+    },
+    flowchart: { curve: 'basis', padding: 15 },
+    securityLevel: 'loose'
+  });
+</script>
+
+<!-- Carousel JS -->
+<script>
+function changeSlide(carouselId, direction) {
+  const carousel = document.getElementById(carouselId);
+  const slides = carousel.querySelectorAll('.slide');
+  const dots = carousel.querySelectorAll('.dot');
+  let current = Array.from(slides).findIndex(s => s.classList.contains('active'));
+  slides[current].classList.remove('active');
+  dots[current].classList.remove('active');
+  current = (current + direction + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  dots[current].classList.add('active');
+}
+
+function goToSlide(carouselId, index) {
+  const carousel = document.getElementById(carouselId);
+  const slides = carousel.querySelectorAll('.slide');
+  const dots = carousel.querySelectorAll('.dot');
+  slides.forEach((s, i) => {
+    s.classList.toggle('active', i === index);
+    dots[i].classList.toggle('active', i === index);
+  });
+}
+</script>
+</body>
+</html>
