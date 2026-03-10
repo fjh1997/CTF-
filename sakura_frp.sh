@@ -1,10 +1,13 @@
+#!/bin/bash
+
+# 设置安装目录
 INSTALL_DIR="/mnt/workspace/sakura_frp"
 
 echo "================================================="
-echo "   Sakura Frp (新版启动器) 魔塔特供安装脚本      "
+echo " Sakura Frp (新版启动器) + OpenClaw 自启终极版   "
 echo "================================================="
 
-# 1. 安装必要的依赖环境 (魔塔环境通常是基于 Debian/Ubuntu)
+# 1. 安装必要的依赖环境
 echo "[*] 正在安装解压和配置所需的依赖 (zstd, jq)..."
 sudo apt-get update && sudo apt-get install -y curl tar zstd jq
 
@@ -67,7 +70,6 @@ mv config.json.tmp config.json
 echo "[*] 正在生成控制脚本 start.sh..."
 cat > start.sh << EOBS
 #!/bin/bash
-# 声明环境变量指向配置目录
 export NATFRP_SERVICE_WD="$INSTALL_DIR"
 cd "\$NATFRP_SERVICE_WD"
 
@@ -77,8 +79,7 @@ else
     echo "正在启动 Sakura Frp 新版守护进程..."
     nohup ./natfrp-service --daemon > frp.log 2>&1 &
     sleep 2
-    echo "启动成功！日志文件保存在: $INSTALL_DIR/frp.log"
-    echo "现在你可以去 Sakura Frp 官网后台启动你的隧道了！"
+    echo "启动成功！"
 fi
 EOBS
 chmod +x start.sh
@@ -97,10 +98,40 @@ fi
 EOBS
 chmod +x stop.sh
 
+# 9. 注入 OpenClaw 官方自启钩子 (bz-startup)
+echo "[*] 正在配置容器开机自启 (bz-startup)..."
+mkdir -p /root/bz-startup
+STARTUP_SCRIPT="/root/bz-startup/main.sh"
+
+# 确保文件存在且带有 bash 头
+if [ ! -f "$STARTUP_SCRIPT" ]; then
+    echo "#!/bin/bash" > "$STARTUP_SCRIPT"
+fi
+
+# 检查是否已经注入过，避免重复追加代码
+if grep -q "$INSTALL_DIR/start.sh" "$STARTUP_SCRIPT"; then
+    echo "[*] 自启项已存在，无需重复添加。"
+else
+    # 追加启动命令到 main.sh 的末尾
+    cat >> "$STARTUP_SCRIPT" << EOBS
+
+# ========== Sakura Frp Auto Start ==========
+if [ -f "$INSTALL_DIR/start.sh" ]; then
+    echo "[*] 正在随 OpenClaw 拉起 Sakura Frp 内网穿透..."
+    bash "$INSTALL_DIR/start.sh"
+fi
+# ===========================================
+EOBS
+    echo "[*] 官方自启钩子配置完成！"
+fi
+
+chmod +x "$STARTUP_SCRIPT"
+
 echo "================================================="
-echo " 🎉 安装完成！所有文件已永久保存在: $INSTALL_DIR"
+echo " 🎉 终极安装完成！"
+echo " Sakura Frp 已安装至: $INSTALL_DIR"
+echo " 自启钩子已写入至: $STARTUP_SCRIPT"
 echo "================================================="
-echo " ▶ 启动穿透：bash $INSTALL_DIR/start.sh"
-echo " ⏹ 停止穿透：bash $INSTALL_DIR/stop.sh"
-echo " 📄 查看日志：tail -f $INSTALL_DIR/frp.log"
+echo " ▶ 以后容器重启，内网穿透会自动跟随 OpenClaw 满血复活！"
+echo " ▶ 无需任何手动操作！"
 echo "================================================="
