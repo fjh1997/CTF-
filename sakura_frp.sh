@@ -67,7 +67,7 @@ jq ". + {
 mv config.json.tmp config.json
 
 # 7. 生成一键启动脚本
-echo "[*] 正在生成控制脚本 start.sh..."
+echo "[*] 正在生成底层启动/停止脚本..."
 cat > start.sh << EOBS
 #!/bin/bash
 export NATFRP_SERVICE_WD="$INSTALL_DIR"
@@ -79,13 +79,12 @@ else
     echo "正在启动 Sakura Frp 新版守护进程..."
     nohup ./natfrp-service --daemon > frp.log 2>&1 &
     sleep 2
-    echo "启动成功！"
+    echo "启动指令已发送！"
 fi
 EOBS
 chmod +x start.sh
 
 # 8. 生成一键停止脚本
-echo "[*] 正在生成控制脚本 stop.sh..."
 cat > stop.sh << EOBS
 #!/bin/bash
 if pgrep -x "natfrp-service" > /dev/null; then
@@ -98,7 +97,29 @@ fi
 EOBS
 chmod +x stop.sh
 
-# 9. 注入 OpenClaw 官方自启钩子 (bz-startup)
+# 9. 🌟 生成统一管理工具 (frp.sh) 🌟
+cat > frp.sh << EOBS
+#!/bin/bash
+case "\$1" in
+    start)
+        bash $INSTALL_DIR/start.sh
+        ;;
+    stop)
+        bash $INSTALL_DIR/stop.sh
+        ;;
+    log)
+        echo "按 Ctrl+C 退出日志查看"
+        tail -f $INSTALL_DIR/frp.log
+        ;;
+    *)
+        echo "用法: bash $INSTALL_DIR/frp.sh {start|stop|log}"
+        exit 1
+        ;;
+esac
+EOBS
+chmod +x frp.sh
+
+# 10. 注入 OpenClaw 官方自启钩子 (bz-startup)
 echo "[*] 正在配置容器开机自启 (bz-startup)..."
 mkdir -p /root/bz-startup
 STARTUP_SCRIPT="/root/bz-startup/main.sh"
@@ -124,14 +145,17 @@ fi
 EOBS
     echo "[*] 官方自启钩子配置完成！"
 fi
-
 chmod +x "$STARTUP_SCRIPT"
 
+echo ""
 echo "================================================="
 echo " 🎉 终极安装完成！"
-echo " Sakura Frp 已安装至: $INSTALL_DIR"
-echo " 自启钩子已写入至: $STARTUP_SCRIPT"
 echo "================================================="
-echo " ▶ 以后容器重启，内网穿透会自动跟随 OpenClaw 满血复活！"
-echo " ▶ 无需任何手动操作！"
+echo " 🔄 自动运行："
+echo "   ▶ 容器重启时，内网穿透将自动跟随 OpenClaw 唤醒！"
+echo ""
+echo " 🎛️ 手动管理命令："
+echo "   ▶ 开启服务: bash $INSTALL_DIR/frp.sh start"
+echo "   ⏹ 关闭服务: bash $INSTALL_DIR/frp.sh stop"
+echo "   📄 查看日志: bash $INSTALL_DIR/frp.sh log"
 echo "================================================="
