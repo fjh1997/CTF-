@@ -97,29 +97,7 @@ fi
 EOBS
 chmod +x stop.sh
 
-# 9. 🌟 生成统一管理工具 (frp.sh) 🌟
-cat > frp.sh << EOBS
-#!/bin/bash
-case "\$1" in
-    start)
-        bash $INSTALL_DIR/start.sh
-        ;;
-    stop)
-        bash $INSTALL_DIR/stop.sh
-        ;;
-    log)
-        echo "按 Ctrl+C 退出日志查看"
-        tail -f $INSTALL_DIR/frp.log
-        ;;
-    *)
-        echo "用法: bash $INSTALL_DIR/frp.sh {start|stop|log}"
-        exit 1
-        ;;
-esac
-EOBS
-chmod +x frp.sh
-
-# 10. 注入 OpenClaw 官方自启钩子 (bz-startup)
+# 9. 注入 OpenClaw 官方自启钩子 (bz-startup)
 echo "[*] 正在配置容器开机自启 (bz-startup)..."
 mkdir -p /root/bz-startup
 STARTUP_SCRIPT="/root/bz-startup/main.sh"
@@ -147,15 +125,15 @@ EOBS
 fi
 chmod +x "$STARTUP_SCRIPT"
 
+# 10. 🔥 首次安装后立刻启动服务 🔥
+echo "[*] 正在首次启动 Sakura Frp 服务..."
+bash "$INSTALL_DIR/start.sh"
+
 echo ""
+echo " 🎉 终极安装完成！服务已在后台运行！"
+echo " 容器重启时，内网穿透将自动跟随 OpenClaw 唤醒！"
 echo "================================================="
-echo " 🎉 终极安装完成！"
-echo "================================================="
-echo " 🔄 自动运行："
-echo "   ▶ 容器重启时，内网穿透将自动跟随 OpenClaw 唤醒！"
-echo ""
-echo " 🎛️ 手动管理命令："
-echo "   ▶ 开启服务: bash $INSTALL_DIR/frp.sh start"
-echo "   ⏹ 关闭服务: bash $INSTALL_DIR/frp.sh stop"
-echo "   📄 查看日志: bash $INSTALL_DIR/frp.sh log"
+echo " ▶ 启动穿透：bash $INSTALL_DIR/start.sh"
+echo " ⏹ 停止穿透：bash $INSTALL_DIR/stop.sh"
+echo " 📄 查看日志：tail -f $INSTALL_DIR/frp.log"
 echo "================================================="
