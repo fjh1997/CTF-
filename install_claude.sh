@@ -45,9 +45,9 @@ sed -i'' -e '/ANTHROPIC_BASE_URL/d' "$SHELL_PROFILE" 2>/dev/null || true
 sed -i'' -e '/ANTHROPIC_API_KEY/d' "$SHELL_PROFILE" 2>/dev/null || true
 sed -i'' -e '/ANTHROPIC_MODEL/d' "$SHELL_PROFILE" 2>/dev/null || true
 
-echo "export ANTHROPIC_BASE_URL="$BASE_URL"" >> "$SHELL_PROFILE"
-echo "export ANTHROPIC_API_KEY="$API_KEY"" >> "$SHELL_PROFILE"
-echo "export ANTHROPIC_MODEL="$MODEL"" >> "$SHELL_PROFILE"
+echo "export ANTHROPIC_BASE_URL=\"$BASE_URL\"" >> "$SHELL_PROFILE"
+echo "export ANTHROPIC_API_KEY=\"$API_KEY\"" >> "$SHELL_PROFILE"
+echo "export ANTHROPIC_MODEL=\"$MODEL\"" >> "$SHELL_PROFILE"
 
 echo -e "
 \033[32m[v] 安装与配置完成！\033[0m"
