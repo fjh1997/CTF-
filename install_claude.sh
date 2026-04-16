@@ -16,7 +16,7 @@ echo -e "\033[36m[>] 正在全局安装 @anthropic-ai/claude-code...\033[0m"
 npm install -g @anthropic-ai/claude-code 2>/dev/null || sudo env "PATH=$PATH" npm install -g @anthropic-ai/claude-code
 
 # 3. 获取 API Key
-read -p "请输入您的阿里云百炼 API Key: " API_KEY
+read -p "请输入您的阿里云百炼 API Key: " API_KEY < /dev/tty
 if [ -z "$API_KEY" ]; then
     echo -e "\033[31m[!] API Key 不能为空。\033[0m"
     exit 1
